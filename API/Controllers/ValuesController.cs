@@ -33,16 +33,16 @@ namespace API.Controllers
         }
 
         // POST api/values
-        [HttpPost]
-        public IActionResult Post([FromBody] string value) => Ok();
+        // [HttpPost]
+        // public IActionResult Post([FromBody] string value) => Ok();
 
-        // PUT api/values/5
-        [HttpPut]
-        public IActionResult Put(int id, [FromBody] string value) => Ok();
+        // // PUT api/values/5
+        // [HttpPut]
+        // public IActionResult Put(int id, [FromBody] string value) => Ok();
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id) => Ok();
+        // // DELETE api/values/5
+        // [HttpDelete("{id}")]
+        // public IActionResult Delete(int id) => Ok();
     }
 
 }
