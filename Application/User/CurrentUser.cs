@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Application.Errors;
 using Application.Interfaces;
 using Domain;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,9 +35,9 @@ namespace Application.User
                 return new User
                 {
                     DisplayName = user.DisplayName,
-                        Token = _jwtGenerator.CreateToken(user),
-                        UserName = user.UserName,
-                        Image = null
+                    Token = _jwtGenerator.CreateToken(user),
+                    UserName = user.UserName,
+                    Image = null
                 };
             }
         }

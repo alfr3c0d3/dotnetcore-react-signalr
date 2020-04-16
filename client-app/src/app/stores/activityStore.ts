@@ -1,22 +1,26 @@
+import { RootStore } from "./rootStore";
 import { history } from "./../../index";
 import { IActivity } from "./../models/activities";
-import { observable, action, computed, runInAction, decorate } from "mobx";
-import { createContext } from "react";
+import { observable, action, computed, runInAction } from "mobx";
 import agent from "../api/agent";
 
-// configure({ enforceActions: "always" });
+export default class ActivityStore {
+  rootStore: RootStore;
 
-class ActivityStore {
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
   //#region Observables
-  activityRegistry = new Map();
-  activity: IActivity | null = null;
-  loadingInitial = false;
+  @observable activityRegistry = new Map();
+  @observable activity: IActivity | null = null;
+  @observable loadingInitial = false;
 
   //#endregion
 
   //#region Computed
 
-  get activitiesByDate() {
+  @computed get activitiesByDate() {
     return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()));
   }
 
@@ -35,7 +39,7 @@ class ActivityStore {
 
   //#region Actions
 
-  //   loadActivities = () => {
+  //   @action loadActivities = () => {
   //     this.loadingInitial = true;
   //     agent.Activities.list()
   //       .then(response => {
@@ -60,7 +64,7 @@ class ActivityStore {
    * Using async instead of Promise actions (i.e. then, catch, finally, etc.)
    */
 
-  loadActivities = async () => {
+  @action loadActivities = async () => {
     this.loadingInitial = true;
     try {
       const activities = await agent.Activities.list();
@@ -79,7 +83,7 @@ class ActivityStore {
     }
   };
 
-  loadActivity = async (id: string) => {
+  @action loadActivity = async (id: string) => {
     let activity = this.getActivity(id);
 
     if (activity) {
@@ -105,15 +109,15 @@ class ActivityStore {
     }
   };
 
-  clearActivity = () => {
+  @action clearActivity = () => {
     this.activity = null;
   };
 
-  getActivity = (id: string) => {
+  @action getActivity = (id: string) => {
     return this.activityRegistry.get(id);
   };
 
-  createActivity = async (activity: IActivity) => {
+  @action createActivity = async (activity: IActivity) => {
     try {
       await agent.Activities.create(activity);
       runInAction("creating activity", () => {
@@ -125,7 +129,7 @@ class ActivityStore {
     }
   };
 
-  editActivity = async (activity: IActivity) => {
+  @action editActivity = async (activity: IActivity) => {
     try {
       await agent.Activities.update(activity);
       runInAction("editing activity", () => {
@@ -138,7 +142,7 @@ class ActivityStore {
     }
   };
 
-  deleteActivity = async (id: string) => {
+  @action deleteActivity = async (id: string) => {
     try {
       await agent.Activities.delete(id);
       runInAction("deleting activity", () => {
@@ -151,20 +155,3 @@ class ActivityStore {
 
   //#endregion
 }
-
-decorate(ActivityStore, {
-  activityRegistry: observable,
-  activity: observable,
-  loadingInitial: observable,
-
-  activitiesByDate: computed,
-
-  loadActivities: action,
-  loadActivity: action,
-  clearActivity: action,
-  createActivity: action,
-  editActivity: action,
-  deleteActivity: action,
-});
-
-export default createContext(new ActivityStore());
