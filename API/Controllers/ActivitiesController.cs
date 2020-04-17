@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Application.Activities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -29,7 +30,9 @@ namespace API.Controllers
             return Ok(result);
         }
 
+
         [HttpPut("{id}")]
+        [Authorize(Policy = "IsActivityHost")]
         public async Task<IActionResult> Update(Guid id, Edit.Command command)
         {
             command.Id = id;
@@ -38,9 +41,24 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "IsActivityHost")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await Mediator.Send(new Delete.Command { Id = id });
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<IActionResult> Attend(Guid id)
+        {
+            var result = await Mediator.Send(new Attend.Command { Id = id });
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}/attend")]
+        public async Task<IActionResult> Unattend(Guid id)
+        {
+            var result = await Mediator.Send(new Unattend.Command { Id = id });
             return Ok(result);
         }
     }
