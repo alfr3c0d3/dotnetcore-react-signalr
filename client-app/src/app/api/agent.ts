@@ -1,6 +1,6 @@
 import { IUser, IUserFormValues } from "./../models/user";
 import { history } from "./../..";
-import { IActivity } from "./../models/activities";
+import { IActivity } from "../models/activity";
 import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 
@@ -52,6 +52,8 @@ const Activities = {
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity),
   delete: (id: string) => requests.delete(`/activities/${id}`),
+  attend: (id: string) => requests.post(`/activities/${id}/attend`, {}),
+  unattend: (id: string) => requests.delete(`/activities/${id}/attend`),
 };
 
 const User = {

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
-import { IActivityFormValues, ActivityFormValues } from "../../../app/models/activities";
+import { IActivityFormValues, ActivityFormValues } from "../../../app/models/activity";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
@@ -32,7 +32,7 @@ interface DetailParams {
 }
 
 const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
-  const { loadActivity, createActivity, editActivity } = useContext(RootStoreContext).activityStore;
+  const { loadActivity, createActivity, editActivity, submitting } = useContext(RootStoreContext).activityStore;
 
   const [activity, setActivity] = useState<IActivityFormValues>(new ActivityFormValues());
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,14 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, hist
                 </Form.Group>
                 <Field component={TextInput} placeholder="City" name="city" value={activity.city} />
                 <Field component={TextInput} placeholder="Venue" name="venue" value={activity.venue} />
-                <Button disabled={loading || invalid} floated="right" positive type="submit" content="Submit" />
+                <Button
+                  loading={submitting}
+                  disabled={loading || invalid}
+                  floated="right"
+                  positive
+                  type="submit"
+                  content="Submit"
+                />
                 <Button
                   disabled={loading}
                   floated="right"

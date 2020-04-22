@@ -1,7 +1,7 @@
 import React from "react";
 import { Segment, Grid, Icon } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
-import { IActivity } from "../../../app/models/activities";
+import { IActivity } from "../../../app/models/activity";
 import { format } from "date-fns";
 
 const ActivityDetailInfo: React.FC<{ activity: IActivity }> = ({ activity }) => {
