@@ -12,54 +12,46 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var result = await Mediator.Send(new List.Query());
-            return Ok(result);
+            return Ok(await Mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(Guid id)
         {
-            var result = await Mediator.Send(new Details.Query { Id = id });
-            return Ok(result);
+            return Ok(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Create.Command command)
         {
-            var result = await Mediator.Send(command);
-            return Ok(result);
+            return Ok(await Mediator.Send(command));
         }
-
 
         [HttpPut("{id}")]
         [Authorize(Policy = "IsActivityHost")]
         public async Task<IActionResult> Update(Guid id, Edit.Command command)
         {
             command.Id = id;
-            var result = await Mediator.Send(command);
-            return Ok(result);
+            return Ok(await Mediator.Send(command));
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "IsActivityHost")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await Mediator.Send(new Delete.Command { Id = id });
-            return Ok(result);
+            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
         }
 
         [HttpPost("{id}/attend")]
         public async Task<IActionResult> Attend(Guid id)
         {
-            var result = await Mediator.Send(new Attend.Command { Id = id });
-            return Ok(result);
+            return Ok(await Mediator.Send(new Attend.Command { Id = id }));
         }
 
         [HttpDelete("{id}/attend")]
         public async Task<IActionResult> Unattend(Guid id)
         {
-            var result = await Mediator.Send(new Unattend.Command { Id = id });
-            return Ok(result);
+            return Ok(await Mediator.Send(new Unattend.Command { Id = id }));
         }
     }
 }
