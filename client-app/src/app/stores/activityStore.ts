@@ -5,6 +5,7 @@ import { history } from "./../../index";
 import { IActivity } from "../models/activity";
 import { observable, action, computed, runInAction } from "mobx";
 import agent from "../api/agent";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 export default class ActivityStore {
   rootStore: RootStore;
@@ -19,6 +20,7 @@ export default class ActivityStore {
   @observable loading = false;
   @observable loadingInitial = false;
   @observable submitting = false;
+  @observable.ref hubConnection: HubConnection | null = null;
 
   //#endregion
 
@@ -42,32 +44,6 @@ export default class ActivityStore {
   //#endregion
 
   //#region Actions
-
-  //   @action loadActivities = () => {
-  //     this.loadingInitial = true;
-  //     agent.Activities.list()
-  //       .then(response => {
-  //         runInAction(() => {
-  //           response.forEach(activity => {
-  //             activity.date = activity.date.split(".")[0];
-  //             this.activityRegistry.set(activity.id, activity);
-  //           });
-  //         });
-  //       })
-  //       .catch(error => {
-  //         console.log(error);
-  //       })
-  //       .finally(() =>
-  //         runInAction(() => {
-  //           this.loadingInitial = false;
-  //         })
-  //       );
-  //   };
-
-  /**
-   * Using async instead of Promise actions (i.e. then, catch, finally, etc.)
-   */
-
   @action loadActivities = async () => {
     this.loadingInitial = true;
     try {
@@ -129,6 +105,7 @@ export default class ActivityStore {
       attendee.isHost = true;
       activity.isHost = true;
       activity.attendees = [attendee];
+      activity.comments = [];
       runInAction("creating activity", () => {
         this.activityRegistry.set(activity.id, activity);
         this.submitting = false;
@@ -209,7 +186,57 @@ export default class ActivityStore {
       runInAction(() => {
         this.loading = false;
       });
-      toast.error("Problem  canceling attendance");
+      toast.error("Problem canceling attendance");
+    }
+  };
+
+  @action createHubConnection = (activityId: string) => {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chat", { accessTokenFactory: () => this.rootStore.commonStore.token! })
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    this.hubConnection
+      .start()
+      .then(() => console.log(this.hubConnection!.state))
+      .then(() => {
+        console.log("Attempting to join group");
+        this.hubConnection!.invoke("AddToGroup", activityId);
+      })
+      .catch((error) => console.log("Error establishing connection", error));
+
+    this.hubConnection.on("ReceiveComment", (comment) => {
+      runInAction(() => {
+        this.activity!.comments.push(comment);
+      });
+    });
+
+    this.hubConnection.on("Send", (message) => {
+      toast.info(message);
+    });
+  };
+
+  @action stopHubConnection = () => {
+    this.hubConnection!.invoke("RemoveFromGroup", this.activity!.id)
+      .then(() => {
+        this.hubConnection!.stop();
+      })
+      .then(() => {
+        console.log("Connection stopped");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  @action addComment = async (values: any) => {
+    values.activityId = this.activity!.id;
+
+    try {
+      await this.hubConnection!.invoke("SendComment", values);
+    } catch (error) {
+      toast.error("Problem sending the comment");
+      console.log(error);
     }
   };
 

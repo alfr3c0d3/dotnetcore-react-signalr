@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Application.Photos;
-using Application.Profiles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
