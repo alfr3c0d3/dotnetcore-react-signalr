@@ -79,6 +79,10 @@ const Profile = {
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
   deletePhoto: (id: string): Promise<IPhoto> => requests.delete(`/photos/${id}`),
   updateProfile: (profile: Partial<IProfile>) => requests.put(`/profiles`, profile),
+  follow: (userName: string) => requests.post(`/profiles/${userName}/follow`, {}),
+  unfollow: (userName: string) => requests.delete(`/profiles/${userName}/follow`),
+  listFollowings: (userName: string, predicate: string) =>
+    requests.get(`/profiles/${userName}/follow?predicate=${predicate}`),
 };
 
 export default { Activities, User, Profile };
