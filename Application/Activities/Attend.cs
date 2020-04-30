@@ -35,7 +35,7 @@ namespace Application.Activities
 
                 if (activity == null)
                 {
-                    throw new RestException(HttpStatusCode.NotFound, new {Activity = "Could not find activity"});
+                    throw new RestException(HttpStatusCode.NotFound, new { Activity = "Could not find activity" });
                 }
 
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername(), cancellationToken);
@@ -46,7 +46,7 @@ namespace Application.Activities
 
                 if (attendance != null)
                 {
-                    throw new RestException(HttpStatusCode.BadRequest, new {Attendance = $"{user.DisplayName} already attending to this activity"});
+                    throw new RestException(HttpStatusCode.BadRequest, new { Attendance = $"{user.DisplayName} already attending to this activity" });
                 }
 
                 attendance = new UserActivity

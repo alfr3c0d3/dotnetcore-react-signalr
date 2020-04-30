@@ -14,8 +14,7 @@ namespace Infrastructure.Photos
 
         public PhotoAccessor(IOptions<CloudinarySettings> config)
         {
-            var acc = new Account
-            (
+            var acc = new Account(
                 config.Value.CloudName,
                 config.Value.ApiKey,
                 config.Value.ApiSecret
@@ -30,16 +29,14 @@ namespace Infrastructure.Photos
 
             if (file.Length > 0)
             {
-                using (var stream = file.OpenReadStream())
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams
                 {
-                    var uploadParams = new ImageUploadParams
-                    {
-                        File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face")
-                    };
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face")
+                };
 
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                }
+                uploadResult = _cloudinary.Upload(uploadParams);
             }
 
             if (uploadResult.Error != null)
@@ -50,16 +47,16 @@ namespace Infrastructure.Photos
             return new PhotoUploadResult
             {
                 PublicId = uploadResult.PublicId,
-                Url = uploadResult.SecureUri.AbsoluteUri
+                    Url = uploadResult.SecureUri.AbsoluteUri
             };
         }
 
         public string DeletePhoto(string publicId)
         {
-           var deleteParams = new DeletionParams(publicId);
-           var result = _cloudinary.Destroy(deleteParams);
+            var deleteParams = new DeletionParams(publicId);
+            var result = _cloudinary.Destroy(deleteParams);
 
-           return result.Result == "ok" ? result.Result : null;
+            return result.Result == "ok" ? result.Result : null;
         }
     }
 }

@@ -1,21 +1,28 @@
 ﻿using System;
-using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Errors;
 using Application.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Photos
+namespace Application.Profiles
 {
-    public class SetMain
+    public class Edit
     {
         public class Command : IRequest
         {
-            public string Id { get; set; }
+            public string DisplayName { get; set; }
+            public string Bio { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.DisplayName).NotEmpty();
+            }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -32,17 +39,9 @@ namespace Application.Photos
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername(), cancellationToken);
-                var photo = user.Photos.FirstOrDefault(x => x.Id == request.Id);
-
-                if (photo == null)
-                    throw new RestException(HttpStatusCode.NotFound, new { Photo = "Not Found" });
-
-                var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
-
-                if (currentMain != null)
-                    currentMain.IsMain = false;
-
-                photo.IsMain = true;
+                
+                user.DisplayName = request.DisplayName;
+                user.Bio = request.Bio ?? user.Bio;
 
                 var success = await _context.SaveChangesAsync(cancellationToken) > 0;
                 if (success) return Unit.Value;

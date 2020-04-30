@@ -54,9 +54,8 @@ namespace Application.User
                 if (await _context.Users.Where(x => x.Email == request.Email).AnyAsync(cancellationToken))
                     throw new RestException(HttpStatusCode.BadRequest, new { Email = "Email already exists" });
 
-
                 if (await _context.Users.Where(x => x.UserName == request.UserName).AnyAsync(cancellationToken))
-                    throw new RestException(HttpStatusCode.BadRequest, new { Username = "Username already exists" });
+                    throw new RestException(HttpStatusCode.BadRequest, new { UserName = "UserName already exists" });
 
                 var user = new AppUser
                 {
@@ -73,9 +72,9 @@ namespace Application.User
                     return new User
                     {
                         DisplayName = user.DisplayName,
-                        Token = _jwtGenerator.CreateToken(user),
-                        UserName = user.UserName,
-                        Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+                            Token = _jwtGenerator.CreateToken(user),
+                            UserName = user.UserName,
+                            Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
                     };
                 }
 

@@ -15,7 +15,7 @@ namespace Application.Photos
     {
         public class Command : IRequest<Photo>
         {
-            public IFormFile File{ get; set; }
+            public IFormFile File { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Photo>

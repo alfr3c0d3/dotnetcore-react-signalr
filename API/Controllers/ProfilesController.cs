@@ -9,7 +9,13 @@ namespace API.Controllers
         [HttpGet("{userName}")]
         public async Task<IActionResult> Get(string userName)
         {
-            return Ok(await Mediator.Send(new Details.Query {UserName = userName}));
+            return Ok(await Mediator.Send(new Details.Query { UserName = userName }));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Edit(Edit.Command command)
+        {
+            return Ok(await Mediator.Send(command));
         }
     }
 }

@@ -8,9 +8,7 @@ using Persistence;
 
 namespace Infrastructure.Security
 {
-    public class IsHostRequirement : IAuthorizationRequirement
-    {
-    }
+    public class IsHostRequirement : IAuthorizationRequirement { }
 
     public class IsHostRequirementHandler : AuthorizationHandler<IsHostRequirement>
     {
@@ -26,7 +24,7 @@ namespace Infrastructure.Security
         {
             var currentUserName = _httpContextAccessor.HttpContext.User?.Claims?
                 .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            
+
             var activityId = Guid.Parse(_httpContextAccessor.HttpContext.Request.RouteValues
                 .FirstOrDefault(x => x.Key == "id").Value.ToString());
 

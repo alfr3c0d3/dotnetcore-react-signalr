@@ -37,10 +37,10 @@ namespace Application.Photos
                 var photo = user.Photos.FirstOrDefault(x => x.Id == request.Id);
 
                 if (photo == null)
-                    throw new RestException(HttpStatusCode.NotFound, new {Photo = "Not Found"});
+                    throw new RestException(HttpStatusCode.NotFound, new { Photo = "Not Found" });
 
-                if(photo.IsMain)
-                    throw new RestException(HttpStatusCode.BadRequest, new {Photo = "You cannot delete your main photo"});
+                if (photo.IsMain)
+                    throw new RestException(HttpStatusCode.BadRequest, new { Photo = "You cannot delete your main photo" });
 
                 var result = _photoAccessor.DeletePhoto(photo.Id);
 

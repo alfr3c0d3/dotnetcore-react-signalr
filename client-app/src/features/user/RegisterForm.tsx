@@ -10,7 +10,7 @@ import { combineValidators, isRequired } from "revalidate";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 
 const validate = combineValidators({
-  userName: isRequired("Username"),
+  userName: isRequired("UserName"),
   displayName: isRequired("Display Name"),
   email: isRequired("Email"),
   password: isRequired("Password"),
@@ -30,7 +30,7 @@ const RegisterForm = () => {
       render={({ handleSubmit, submitError, invalid, dirtySinceLastSubmit, pristine }) => (
         <Form onSubmit={handleSubmit}>
           <Header as="h2" content="Sign up to Reactivities" color="teal" textAlign="center" />
-          <Field component={TextInput} name="userName" placeholder="Username" />
+          <Field component={TextInput} name="userName" placeholder="UserName" />
           <Field component={TextInput} name="displayName" placeholder="Display Name" />
           <Field component={TextInput} name="email" placeholder="Email" />
           <Field component={TextInput} name="password" placeholder="Password" type="password" />
