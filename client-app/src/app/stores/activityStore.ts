@@ -3,15 +3,26 @@ import { setActivityProps, createAttendee } from "./../common/util/utils";
 import { RootStore } from "./rootStore";
 import { history } from "./../../index";
 import { IActivity } from "../models/activity";
-import { observable, action, computed, runInAction } from "mobx";
+import { observable, action, computed, runInAction, reaction } from "mobx";
 import agent from "../api/agent";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+
+const LIMIT = 2;
 
 export default class ActivityStore {
   rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+
+    reaction(
+      () => this.predicate.keys(),
+      () => {
+        this.page = 0;
+        this.activityRegistry.clear();
+        this.loadActivities();
+      }
+    );
   }
 
   //#region Observables
@@ -21,10 +32,17 @@ export default class ActivityStore {
   @observable loadingInitial = false;
   @observable submitting = false;
   @observable.ref hubConnection: HubConnection | null = null;
+  @observable activityCount = 0;
+  @observable page = 0;
+  @observable predicate = new Map();
 
   //#endregion
 
   //#region Computed
+
+  @computed get totalPages() {
+    return Math.ceil(this.activityCount / LIMIT);
+  }
 
   @computed get activitiesByDate() {
     return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()));
@@ -41,18 +59,37 @@ export default class ActivityStore {
     );
   }
 
+  @computed get axiosParams() {
+    const params = new URLSearchParams();
+    params.append("limit", `${LIMIT}`);
+    params.append("offset", `${this.page ? this.page * LIMIT : 0}`);
+    this.predicate.forEach((value, key: string) => {
+      if (key === "startDate") params.append(key, value.toISOString());
+      params.append(key, value);
+    });
+
+    return params;
+  }
+
   //#endregion
 
   //#region Actions
+
+  @action setPage = (page: number) => {
+    this.page = page;
+  };
+
   @action loadActivities = async () => {
     this.loadingInitial = true;
     try {
-      const activities = await agent.Activities.list();
+      const { activities, activityCount } = await agent.Activities.list(this.axiosParams);
+
       runInAction("loading activities", () => {
         activities.forEach((activity) => {
           setActivityProps(activity, this.rootStore.userStore.user!);
           this.activityRegistry.set(activity.id, activity);
         });
+        this.activityCount = activityCount;
         this.loadingInitial = false;
       });
     } catch (error) {
@@ -192,7 +229,9 @@ export default class ActivityStore {
 
   @action createHubConnection = (activityId: string) => {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chat", { accessTokenFactory: () => this.rootStore.commonStore.token! })
+      .withUrl("http://localhost:5000/chat", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
+      })
       .configureLogging(LogLevel.Information)
       .build();
 
@@ -240,6 +279,11 @@ export default class ActivityStore {
       toast.error("Problem sending the comment");
       console.log(error);
     }
+  };
+
+  @action setPredicate = (key: string, value: string | Date) => {
+    this.predicate.clear();
+    if (key !== "all") this.predicate.set(key, value);
   };
 
   //#endregion

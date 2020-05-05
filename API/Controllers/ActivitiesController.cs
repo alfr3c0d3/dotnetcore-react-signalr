@@ -10,9 +10,9 @@ namespace API.Controllers
     {
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate)
         {
-            return Ok(await Mediator.Send(new List.Query()));
+            return Ok(await Mediator.Send(new List.Query(limit, offset, isGoing, isHost, startDate)));
         }
 
         [HttpGet("{id}")]

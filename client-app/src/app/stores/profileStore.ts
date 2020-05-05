@@ -1,4 +1,4 @@
-import { IPhoto } from "./../models/profile";
+import { IPhoto, IUserActivity } from "./../models/profile";
 import { toast } from "react-toastify";
 import { IProfile } from "../models/profile";
 import { observable, action, runInAction, computed, reaction } from "mobx";
@@ -31,6 +31,8 @@ export default class ProfileStore {
   @observable loading = false;
   @observable followings: IProfile[] = [];
   @observable activeTab: number = 0;
+  @observable userActivities: IUserActivity[] = [];
+  @observable loadingActivities = false;
 
   //#endregion
 
@@ -195,6 +197,23 @@ export default class ProfileStore {
 
   @action setActiveTab = (activeIndex: number) => {
     this.activeTab = activeIndex;
+  };
+
+  @action loadUserActivities = async (userName: string, predicate?: string) => {
+    this.loadingActivities = true;
+    try {
+      const activities = await agent.Profile.listActivities(this.profile!.userName, predicate!);
+      runInAction(() => {
+        this.userActivities = activities;
+        this.loadingActivities = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loadingActivities = false;
+      });
+      console.log(error);
+      toast.error("Problem loading activities");
+    }
   };
   //#endregion
 }
