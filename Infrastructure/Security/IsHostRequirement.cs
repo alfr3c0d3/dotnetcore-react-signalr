@@ -26,7 +26,7 @@ namespace Infrastructure.Security
                 .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
             var activityId = Guid.Parse(_httpContextAccessor.HttpContext.Request.RouteValues
-                .FirstOrDefault(x => x.Key == "id").Value.ToString());
+                .FirstOrDefault(x => x.Key == "id").Value.ToString() ?? string.Empty);
 
             var activity = _context.Activities.FindAsync(activityId).Result;
             var host = activity.UserActivities.FirstOrDefault(x => x.IsHost);
