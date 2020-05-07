@@ -252,8 +252,8 @@ export default class ActivityStore {
       });
     });
 
-    this.hubConnection.on("Send", (message) => {
-      toast.info(message);
+    this.hubConnection.on("Send", (data) => {
+      if (data.userName !== this.rootStore.userStore.user!.userName) toast.info(data.message);
     });
   };
 

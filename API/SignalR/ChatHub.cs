@@ -34,14 +34,14 @@ namespace API.SignalR
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            await Clients.Group(groupName).SendAsync("Send", $"{GetUserName()} has joined the group");
+            await Clients.Group(groupName).SendAsync("Send", new { UserName = GetUserName(), Message = $"{GetUserName()} has join the group" });
         }
 
         public async Task RemoveFromGroup(string groupName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 
-            await Clients.Group(groupName).SendAsync("Send", $"{GetUserName()} has left the group");
+            await Clients.Group(groupName).SendAsync("Send", new { UserName = GetUserName(), Message = $"{GetUserName()} has left the group" });
         }
     }
 }
