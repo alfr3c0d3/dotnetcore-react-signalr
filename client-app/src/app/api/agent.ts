@@ -5,7 +5,6 @@ import { history } from "./../..";
 import { IActivity } from "../models/activity";
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
-import { invariant } from "mobx/lib/internal";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -27,9 +26,6 @@ axios.interceptors.response.use(undefined, (error) => {
 
   const { status, data, config, headers } = error.response;
 
-  if (status === 404 || (status === 400 && config.method === "get" && data.errors.hasOwnProperty("id"))) {
-    history.push("/notFound");
-  }
   if (
     status === 401 &&
     headers["www-authenticate"] === 'Bearer error="invalid_token", error_description="The token is expired"'
@@ -38,6 +34,9 @@ axios.interceptors.response.use(undefined, (error) => {
     localStorage.removeItem("jwt");
     history.push("/");
     toast.info("Your session has expired. Please login again");
+  }
+  if (status === 404 || (status === 400 && config.method === "get" && data.errors.hasOwnProperty("id"))) {
+    history.push("/notFound");
   }
   if (status === 500) {
     toast.error("Server error - check the terminal for more info!");
@@ -52,7 +51,8 @@ const sleep = (ms: number) => (response: AxiosResponse) =>
   new Promise<AxiosResponse>((resolve) => setTimeout(() => resolve(response), ms));
 
 const requests = {
-  get: (url: string, config?: AxiosRequestConfig | undefined) => axios.get(url, config).then(responseBody),
+  get: (url: string, config?: AxiosRequestConfig | undefined) =>
+    axios.get(url, config).then(responseBody),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),

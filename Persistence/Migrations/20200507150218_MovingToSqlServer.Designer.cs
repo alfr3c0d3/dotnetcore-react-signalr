@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Persistence;
 
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200506212244_MigrationToSqlServer")]
-    partial class MigrationToSqlServer
+    [Migration("20200507150218_MovingToSqlServer")]
+    partial class MovingToSqlServer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

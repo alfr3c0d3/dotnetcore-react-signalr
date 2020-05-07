@@ -13,9 +13,6 @@
     </PackageReference>
     <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>78d14eb4-8eb7-4558-892f-28b1dbb8a275</UserSecretsId>

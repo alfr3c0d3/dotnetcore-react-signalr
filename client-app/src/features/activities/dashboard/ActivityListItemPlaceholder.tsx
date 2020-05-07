@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Segment, Button, Placeholder } from "semantic-ui-react";
+import React, { Fragment } from 'react';
+import { Segment, Button, Placeholder } from 'semantic-ui-react';
 const ActivityListItemPlaceholder = () => {
   return (
     <Fragment>
@@ -24,7 +24,7 @@ const ActivityListItemPlaceholder = () => {
           </Segment>
           <Segment secondary style={{ minHeight: 70 }} />
           <Segment clearing>
-            <Button disabled color="blue" floated="right" content="View" />
+            <Button disabled color='blue' floated='right' content='View' />
           </Segment>
         </Segment.Group>
       </Placeholder>

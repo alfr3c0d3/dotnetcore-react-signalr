@@ -24,9 +24,7 @@ const ActivityDashboard = () => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        {loadingInitial && page === 0 ? (
-          <ActivityListItemPlaceholder />
-        ) : (
+        {loadingInitial && page === 0 ? <ActivityListItemPlaceholder /> : (
           <InfiniteScroll
             pageStart={0}
             loadMore={handleNext}

@@ -6,6 +6,7 @@ import LoginForm from "../user/LoginForm";
 import RegisterForm from "../user/RegisterForm";
 
 const HomePage = () => {
+
   const token = localStorage.getItem("jwt");
   const rootStore = useContext(RootStoreContext);
   const { isLoggedIn, user } = rootStore.userStore;
