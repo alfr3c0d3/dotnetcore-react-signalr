@@ -15,22 +15,22 @@ namespace API.Controllers
             _context = context;
         }
 
-        // GET api/values
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
+        //// GET api/values
+        //[HttpGet]
+        //public async Task<IActionResult> Get()
+        //{
 
-            var values = await _context.Values.ToListAsync();
-            return Ok(values);
-        }
+        //    var values = await _context.Values.ToListAsync();
+        //    return Ok(values);
+        //}
 
-        // GET api/value/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var value = await _context.Values.FindAsync(id);
-            return Ok(value);
-        }
+        //// GET api/value/5
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Get(int id)
+        //{
+        //    var value = await _context.Values.FindAsync(id);
+        //    return Ok(value);
+        //}
 
         // POST api/values
         // [HttpPost]
