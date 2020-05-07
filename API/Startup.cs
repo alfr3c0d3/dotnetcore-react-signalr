@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Activities;
@@ -50,7 +51,9 @@ namespace API
                 {
                     policy.AllowAnyHeader()
                         .AllowAnyMethod()
-                        .WithOrigins("http://localhost:3000").AllowCredentials();
+                        .WithExposedHeaders("WWW-Authenticate")
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
                 });
             });
 
@@ -92,7 +95,9 @@ namespace API
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateAudience = false,
-                    ValidateIssuer = false
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 opt.Events = new JwtBearerEvents {
                     OnMessageReceived = context =>
@@ -129,6 +134,9 @@ namespace API
 
             // app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
             app.UseCors("CorsPolicy");
 
@@ -139,6 +147,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

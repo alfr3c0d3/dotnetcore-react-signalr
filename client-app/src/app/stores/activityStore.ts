@@ -3,7 +3,7 @@ import { setActivityProps, createAttendee } from "./../common/util/utils";
 import { RootStore } from "./rootStore";
 import { history } from "./../../index";
 import { IActivity } from "../models/activity";
-import { observable, action, computed, runInAction, reaction } from "mobx";
+import { observable, action, computed, runInAction, reaction, toJS } from "mobx";
 import agent from "../api/agent";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
@@ -105,7 +105,7 @@ export default class ActivityStore {
 
     if (activity) {
       this.activity = activity;
-      return activity;
+      return toJS(activity);
     } else {
       this.loadingInitial = true;
       try {
@@ -229,7 +229,7 @@ export default class ActivityStore {
 
   @action createHubConnection = (activityId: string) => {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chat", {
+      .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
         accessTokenFactory: () => this.rootStore.commonStore.token!,
       })
       .configureLogging(LogLevel.Information)
